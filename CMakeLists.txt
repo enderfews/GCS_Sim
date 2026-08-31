@@ -14,4 +14,22 @@ project ("GCS_Sim")
 # Include sub-projects.
 #add_subdirectory ("GCS_Sim")
 
+set(CMAKE_PREFIX_PATH "C:/Qt/6.11.2/msvc2022_64")
+
+find_package(Qt6 REQUIRED COMPONENTS
+    Core
+    Widgets
+    Network
+    OpenGL
+    OpenGLWidgets
+)
+
 add_executable (GCS_Sim "src/GCS_Sim.cpp" "src/GCS_Sim.h")
+
+target_link_libraries(GCS_Sim PRIVATE
+    Qt6::Core
+    Qt6::Widgets
+    Qt6::Network
+    Qt6::OpenGL
+    Qt6::OpenGLWidgets
+)
