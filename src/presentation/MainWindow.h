@@ -19,4 +19,40 @@ class GCSMainWindow : public QWidget
 
 public:
 	GCSMainWindow(QWidget* Parent = nullptr);
+
+protected:
+
+	void closeEvent(QCloseEvent* CloseEvent) override;
+
+private:
+
+	//Titles for the window
+	QLabel* TitleLabel = nullptr;
+	QLabel* SubtitleLabel = nullptr;
+
+	//TODO: Connection badges (depends on the connection)
+
+	//Banners
+	QLabel* MissionBanner = nullptr;
+	QLabel* AlarmBanner = nullptr;
+
+	//Drives the blinking of alarmBanner while the alarm is active
+	//and not yet acknowledged by the operator.
+	QTimer* alarmBlinkTimer = nullptr;
+	bool alarmBlinkOn = false;        // current blink phase
+	bool alarmAcknowledged = false;   // true once RTL is pressed, until battery recovers
+
+	//Telemetry labels
+	//TODO: Move all these labels into a new QWidget for modularity
+	/*
+	    Position position;
+    Attitude attitude;
+    Velocity velocity;
+    BatteryState battery;
+
+    float groundSpeed;
+    float airSpeed;
+
+    bool gpsValid;
+	*/
 };

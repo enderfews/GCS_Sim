@@ -16,6 +16,11 @@ project ("GCS_Sim")
 
 set(CMAKE_PREFIX_PATH "C:/Qt/6.11.2/msvc2022_64")
 
+# Enable Qt automatic code generation
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
 find_package(Qt6 REQUIRED COMPONENTS
     Core
     Widgets
@@ -24,7 +29,10 @@ find_package(Qt6 REQUIRED COMPONENTS
     OpenGLWidgets
 )
 
-add_executable (GCS_Sim "src/GCS_Sim.cpp" "src/GCS_Sim.h")
+add_executable (GCS_Sim "src/GCS_Sim.cpp"
+            "src/GCS_Sim.h"
+            "src/presentation/MainWindow.h"
+            "src/presentation/MainWindow.cpp")
 
 target_link_libraries(GCS_Sim PRIVATE
     Qt6::Core

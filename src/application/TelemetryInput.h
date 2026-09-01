@@ -12,5 +12,7 @@ class ITelemetryInput
 public:
     virtual ~ITelemetryInput() = default;
 
-    virtual void onTelemetry(UAVState& outUAVState) = 0;
+    virtual void OnTelemetryDataReceived(UAVState& outUAVState) = 0;
+    virtual void OnTelemetryConnected() = 0;
+    virtual void OnTelemetryError() = 0;
 };
