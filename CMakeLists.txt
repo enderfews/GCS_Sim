@@ -29,10 +29,29 @@ find_package(Qt6 REQUIRED COMPONENTS
     OpenGLWidgets
 )
 
-add_executable (GCS_Sim "src/GCS_Sim.cpp"
-            "src/GCS_Sim.h"
-            "src/presentation/MainWindow.h"
-            "src/presentation/MainWindow.cpp")
+# Find all source files
+file(GLOB_RECURSE SOURCES
+    CONFIGURE_DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/*.cpp
+)
+
+# Find all header files
+file(GLOB_RECURSE HEADERS
+    CONFIGURE_DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/*.h
+)
+
+# Create executable
+add_executable(GCS_Sim
+    ${SOURCES}
+    ${HEADERS}
+)
+
+# Include src directory
+target_include_directories(GCS_Sim
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/src
+)
 
 target_link_libraries(GCS_Sim PRIVATE
     Qt6::Core
