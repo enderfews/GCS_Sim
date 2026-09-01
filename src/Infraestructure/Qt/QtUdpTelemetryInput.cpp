@@ -1,6 +1,5 @@
 
 #include "QtUdpTelemetryInput.h"
-#include <QUdpSocket>
 #include <QNetworkDatagram>
 
 
@@ -12,7 +11,7 @@ void QtUdpTelemetryInput::Start()
 	}
 
 	m_pUdpSocket = new QUdpSocket(this);
-	const bool UdpOk = m_pUdpSocket->bind(QHostAddress::Any, 5000);
+	const bool UdpOk = m_pUdpSocket->bind(Address, Port);
 
 	if (!UdpOk)
 	{

@@ -7,18 +7,6 @@
 #include <vector>
 
 using namespace std;
-//struct TelemetryServiceCallback
-//{
-//	using TelemetryServiceCallbackType = function<void(UAVState&)>;
-//public:
-//	TelemetryServiceCallback(TelemetryServiceCallbackType Callback)
-//		m_Callback(Callback)
-//	{
-//	}
-//	TelemetryServiceCallbackType m_Callback;
-//private:
-//	bool m_IsCallbackSet;
-//};
 
 /*
 	Telemetry Service in charge of receiving and decoding data to display

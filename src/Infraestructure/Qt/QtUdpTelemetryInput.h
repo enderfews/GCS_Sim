@@ -3,6 +3,7 @@
 
 #include "domain/TelemetryInput.h"
 #include <QObject>
+#include <QUdpSocket>
 #include <vector>
 class QUdpSocket;
 
@@ -24,6 +25,9 @@ private:
 	OnTelemetryReceivedCallback m_CachedCallback;
 	QUdpSocket* m_pUdpSocket = nullptr;
 	vector<uint8_t> m_CachedRawData;
+
+	static const int Port = 5000;
+	static const QHostAddress::SpecialAddress Address = QHostAddress::LocalHost;
 private slots:
 
 	//Slot function to handle incoming UDP data 
