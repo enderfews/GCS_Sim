@@ -6,7 +6,7 @@ TelemetryService::TelemetryService(ITelemetryInput& Input, ITelemetryDecoder& De
 	, m_Decoder(Decoder)
 	, m_CachedState({})
 {
-	m_Input.SetTelemetryCallback([this](char* EncodedData)
+	m_Input.SetTelemetryCallback([this](const vector<uint8_t>& EncodedData)
 		{
 			OnTelemetryReceived(EncodedData);
 		});
@@ -32,7 +32,7 @@ const UAVState& TelemetryService::GetCurrentUAVState() const
 	return m_CachedState;
 }
 
-void TelemetryService::OnTelemetryReceived(char* EncodedData)
+void TelemetryService::OnTelemetryReceived(const vector<uint8_t>& EncodedData)
 {
 	if (!m_Decoder.Decode(EncodedData, m_CachedState))
 	{

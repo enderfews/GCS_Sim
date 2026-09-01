@@ -4,7 +4,9 @@
 #include "domain/TelemetryInput.h"
 #include "domain/TelemetryDecoder.h"
 #include "domain/UAV_Types.h"
+#include <vector>
 
+using namespace std;
 //struct TelemetryServiceCallback
 //{
 //	using TelemetryServiceCallbackType = function<void(UAVState&)>;
@@ -34,7 +36,7 @@ public:
 
 private:
 
-	void OnTelemetryReceived(char* EncodedData);
+	void OnTelemetryReceived(const vector<uint8_t>&);
 
 	ITelemetryInput& m_Input;
 	ITelemetryDecoder& m_Decoder;

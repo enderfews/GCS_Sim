@@ -2,6 +2,7 @@
 #pragma once
 
 #include <functional>
+#include <vector>
 struct UAVState;
 
 using namespace std;
@@ -12,7 +13,7 @@ class ITelemetryDecoder
 {
 public:
     virtual ~ITelemetryDecoder() = default;
-    virtual bool Decode(char* EncodedData, UAVState& OutUAVState) = 0;
+    virtual bool Decode(const vector<uint8_t>& EncodedData, UAVState& OutUAVState) = 0;
 
     
 };

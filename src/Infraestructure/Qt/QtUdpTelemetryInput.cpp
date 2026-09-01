@@ -35,6 +35,11 @@ void QtUdpTelemetryInput::SetTelemetryCallback(OnTelemetryReceivedCallback Callb
 	m_bIsCallbcackSet = true;
 }
 
+const vector<uint8_t>& QtUdpTelemetryInput::GetCachedRawTelemetryData() const
+{
+	return m_CachedRawData;
+}
+
 void QtUdpTelemetryInput::receiveUdpDatagram()
 {
 	if (!m_bIsCallbcackSet)
@@ -46,7 +51,11 @@ void QtUdpTelemetryInput::receiveUdpDatagram()
 	QNetworkDatagram datagram = m_pUdpSocket->receiveDatagram();
 
 	// Extract only the raw bytes from the datagram, ignoring metadata.
-	QByteArray Payload = datagram.data();
-	// Bytes are not text by themselves — explicitly decode them
-	// as UTF-8 characters to get a readable QString.
+	QByteArray QPayload = datagram.data();
+	//We get the bytes in this format so it doesn't rely on Qt nor other implementations
+	m_CachedRawData.clear();
+	m_CachedRawData.insert(m_CachedRawData.end(), QPayload.begin(), QPayload.end());
+	m_CachedCallback(m_CachedRawData);
+
+
 }
