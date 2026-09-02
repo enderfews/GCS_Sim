@@ -23,10 +23,8 @@ int main(int argc, char* argv[])
 	GCSMainWindow GCSWindow = GCSMainWindow(nullptr);
 
 	//Testing
-	QtUdpTelemetryInput TelemetryInput;
-	QtUtf8TelemetryDecoder TelemetryDecoder;
-	TelemetryService Service(TelemetryInput, TelemetryDecoder);
-	Service.SetTelemetryServiceCallback([](UAVState& State)
+	TelemetryService<QtUdpTelemetryInput, QtUtf8TelemetryDecoder> QtTelemetryService;
+	QtTelemetryService.SetTelemetryServiceCallback([](UAVState& State)
 		{
 			system("cls");
 
@@ -64,7 +62,7 @@ int main(int argc, char* argv[])
 			qDebug() << "========================================";
 		});
 	//End testing
-	Service.Start();
+	QtTelemetryService.Start();
 
 	//Display the window
 	GCSWindow.show();
