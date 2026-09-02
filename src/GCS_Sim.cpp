@@ -2,20 +2,14 @@
 //
 
 #include "GCS_Sim.h"
-#include <QApplication>
-#include "presentation/MainWindow.h"
 
-//Testing services and ports
-#include "application/TelemetryService.h"
-#include "Infraestructure/Qt/QtUdpTelemetryInput.h"
-#include "Infraestructure/Qt/QtUtf8TelemetryDecoder.h"
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
 	cout << "Initialize GCS app." << endl;
-
+	GCSLog::GetInstance().AddPrinter<GCSLogPrinter>();
 	//Create the application object
 	QApplication QTApp(argc, argv);
 
@@ -26,7 +20,7 @@ int main(int argc, char* argv[])
 	TelemetryService<QtUdpTelemetryInput, QtUtf8TelemetryDecoder> QtTelemetryService;
 	QtTelemetryService.SetTelemetryServiceCallback([](UAVState& State)
 		{
-			system("cls");
+			//system("cls");
 
 			qDebug() << "========================================";
 			qDebug() << "             UAV TELEMETRY";

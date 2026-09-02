@@ -1,13 +1,13 @@
 
 #include "QtUdpTelemetryInput.h"
 #include <QNetworkDatagram>
-
+#include "application/Logs/LogManager.h"
 
 void QtUdpTelemetryInput::Start()
 {
 	if (!m_bIsCallbcackSet)
 	{
-		//TODO: Display Warning Error
+		GCSLog::GetInstance().Log(ELogLevel::Warning, FUNCTION_MSG("Callback is not set in telemetry input"));
 	}
 
 	m_pUdpSocket = new QUdpSocket(this);
@@ -15,7 +15,7 @@ void QtUdpTelemetryInput::Start()
 
 	if (!UdpOk)
 	{
-		//TODO: Display Errors
+		GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Binding to address and port failed"));
 	}
 
 	QObject::connect(m_pUdpSocket, &QUdpSocket::readyRead, this, &QtUdpTelemetryInput::receiveUdpDatagram);
@@ -43,7 +43,7 @@ void QtUdpTelemetryInput::receiveUdpDatagram()
 {
 	if (!m_bIsCallbcackSet)
 	{
-		//TODO: Display Errors
+		GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Callback has not set on receiving datagram"));
 		return;
 	}
 	// Fetch the full datagram: raw bytes and metadata

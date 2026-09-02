@@ -6,6 +6,8 @@
 #include "domain/UAV_Types.h"
 #include <vector>
 #include <memory>
+#include "application/Logs/LogManager.h"
+#include "Utils/GCSUtils.h"
 using namespace std;
 
 /*
@@ -46,7 +48,7 @@ public:
 
 		if (!m_Input)
 		{
-			//TODO: Display error message
+			GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Failed to start. Invalid telemetry input"));
 			return;
 		}
 		m_Input->Start();
@@ -62,7 +64,7 @@ public:
 
 		if (!m_Input)
 		{
-			//TODO: Display error message
+			GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Failed to stop. Invalid telemetry input"));
 			return;
 		}
 		m_Input->Stop();
@@ -124,22 +126,23 @@ private:
 	{
 		if (!m_Decoder)
 		{
-			//TODO: Display error message
+			GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Invalid telemetry decoder"));
 			return;
 		}
 
 		if (!m_Decoder->Decode(EncodedData, m_CachedState))
 		{
-			//TODO: Display error log
+			GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Failed to decode"));
 			return;
 		}
 
 		if (!m_TelemetryServiceGatheredCallback)
 		{
-			//TODO: Display error log
+			GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("No callback bound"));
 			return;
 		}
 
+		GCSLog::GetInstance().Log(ELogLevel::Info, FUNCTION_MSG("Telemetry received and decoded successfully"));
 		m_TelemetryServiceGatheredCallback(m_CachedState);
 	}
 
