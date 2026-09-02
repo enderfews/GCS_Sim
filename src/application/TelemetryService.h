@@ -75,6 +75,7 @@ public:
 	{
 		return m_CachedState;
 	}
+private:
 
 	template<class InClass>
 	void InitializeTelemetryInput()
@@ -120,7 +121,6 @@ public:
 	}
 
 
-private:
 
 	void OnTelemetryReceived(const vector<uint8_t>& EncodedData)
 	{

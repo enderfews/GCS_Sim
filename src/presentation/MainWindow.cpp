@@ -1,8 +1,12 @@
 #include "MainWindow.h"
 #include "Globals/WindowGlobals.h"
-//#include <spdlog/spdlog.h>
-#include <QNetworkDatagram>
 
+#include <QVBoxLayout>
+#include <QNetworkDatagram>// Include the QNetworkDatagram header for handling incoming UDP datagrams
+#include <QHBoxLayout> //Allow to desing better IU 
+#include "presentation/Telemetry/Qt/QtTelemetryPanel.h"
+
+TelemetryService<QtUdpTelemetryInput, QtUtf8TelemetryDecoder> GCSMainWindow::UAVTelemetryService;
 
 GCSMainWindow::GCSMainWindow(QWidget* Parent)
 	: QWidget(Parent)
@@ -25,6 +29,35 @@ GCSMainWindow::GCSMainWindow(QWidget* Parent)
     SubtitleLabel = new QLabel(SUBTITLE_LABEL_NAME, this);
     SubtitleLabel->setAlignment(Qt::AlignCenter);
     SubtitleLabel->setStyleSheet(SUBTITLE_LABEL_STYLESHEET);
+
+    //Create a vertical Layout and add the label and button to it
+    QVBoxLayout* Layout = new QVBoxLayout(this);
+
+    //Generate the link to the title and subtitle, added BEFORE the status label
+    Layout->addWidget(this->TitleLabel);
+    Layout->addWidget(this->SubtitleLabel);
+
+    //Telemetry cards row: the three labels side by side, equal width
+
+    //Banners: full width, only one (or none) visible at a time
+    TelemetryPanel = new QtUAVTelemetryPanel(this);
+    Layout->addWidget(TelemetryPanel);
+    Layout->addSpacing(16);
+}
+
+void GCSMainWindow::StartUAVTelemetry()
+{
+    UAVTelemetryService.SetTelemetryServiceCallback([this](UAVState& State)
+        {
+            OnTelemetryReceived(State);
+        });
+
+    UAVTelemetryService.Start();
+}
+
+void GCSMainWindow::StopUAVTelemetry()
+{
+    UAVTelemetryService.Stop();
 }
 
 void GCSMainWindow::closeEvent(QCloseEvent* CloseEvent)
@@ -33,4 +66,9 @@ void GCSMainWindow::closeEvent(QCloseEvent* CloseEvent)
     delete SubtitleLabel;
 
     CloseEvent->accept();
+}
+
+void GCSMainWindow::OnTelemetryReceived(const UAVState& State)
+{
+    TelemetryPanel->SetUAVState(State);
 }

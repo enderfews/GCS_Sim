@@ -11,6 +11,12 @@
 
 #include <QCloseEvent> // Full definition of QCloseEvent, needed to call event->accept()
 #include <QTimer> // Needed for the alarm banner's blinking behavior
+#include "application/TelemetryService.h"
+#include "Infraestructure/Qt/QtUdpTelemetryInput.h"
+#include "Infraestructure/Qt/QtUtf8TelemetryDecoder.h"
+
+class QtUAVTelemetryPanel;
+
 
 class GCSMainWindow : public QWidget
 {
@@ -20,39 +26,22 @@ class GCSMainWindow : public QWidget
 public:
 	GCSMainWindow(QWidget* Parent = nullptr);
 
+	void StartUAVTelemetry();
+	void StopUAVTelemetry();
+
 protected:
 
 	void closeEvent(QCloseEvent* CloseEvent) override;
 
 private:
-
+	void OnTelemetryReceived(const struct UAVState& State);
 	//Titles for the window
 	QLabel* TitleLabel = nullptr;
 	QLabel* SubtitleLabel = nullptr;
+	QPushButton* buttonReconnet = nullptr;
+	QtUAVTelemetryPanel* TelemetryPanel = nullptr;
 
-	//TODO: Connection badges (depends on the connection)
+	//App Services
+	static TelemetryService<class QtUdpTelemetryInput,class QtUtf8TelemetryDecoder> UAVTelemetryService;
 
-	//Banners
-	QLabel* MissionBanner = nullptr;
-	QLabel* AlarmBanner = nullptr;
-
-	//Drives the blinking of alarmBanner while the alarm is active
-	//and not yet acknowledged by the operator.
-	QTimer* alarmBlinkTimer = nullptr;
-	bool alarmBlinkOn = false;        // current blink phase
-	bool alarmAcknowledged = false;   // true once RTL is pressed, until battery recovers
-
-	//Telemetry labels
-	//TODO: Move all these labels into a new QWidget for modularity
-	/*
-	    Position position;
-    Attitude attitude;
-    Velocity velocity;
-    BatteryState battery;
-
-    float groundSpeed;
-    float airSpeed;
-
-    bool gpsValid;
-	*/
 };
