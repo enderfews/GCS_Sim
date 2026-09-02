@@ -14,9 +14,10 @@
 #include "application/TelemetryService.h"
 #include "Infraestructure/Qt/QtUdpTelemetryInput.h"
 #include "Infraestructure/Qt/QtUtf8TelemetryDecoder.h"
-
+#include <memory>
 class QtUAVTelemetryPanel;
 
+using namespace std;
 
 class GCSMainWindow : public QWidget
 {
@@ -42,6 +43,6 @@ private:
 	QtUAVTelemetryPanel* TelemetryPanel = nullptr;
 
 	//App Services
-	static TelemetryService<class QtUdpTelemetryInput,class QtUtf8TelemetryDecoder> UAVTelemetryService;
+	unique_ptr<TelemetryService> m_pUAVTelemetryService;
 
 };

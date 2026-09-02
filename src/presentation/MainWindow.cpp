@@ -6,7 +6,6 @@
 #include <QHBoxLayout> //Allow to desing better IU 
 #include "presentation/Telemetry/Qt/QtTelemetryPanel.h"
 
-TelemetryService<QtUdpTelemetryInput, QtUtf8TelemetryDecoder> GCSMainWindow::UAVTelemetryService;
 
 GCSMainWindow::GCSMainWindow(QWidget* Parent)
 	: QWidget(Parent)
@@ -47,17 +46,27 @@ GCSMainWindow::GCSMainWindow(QWidget* Parent)
 
 void GCSMainWindow::StartUAVTelemetry()
 {
-    UAVTelemetryService.SetTelemetryServiceCallback([this](UAVState& State)
+    if (!m_pUAVTelemetryService)
+    {
+        m_pUAVTelemetryService = make_unique<TelemetryService>();
+        m_pUAVTelemetryService->InitializeTelemetryInput<QtUdpTelemetryInput>();
+        m_pUAVTelemetryService->InitializeTelemetryDecoder<QtUtf8TelemetryDecoder>();
+    }
+    m_pUAVTelemetryService->SetTelemetryServiceCallback([this](UAVState& State)
         {
             OnTelemetryReceived(State);
         });
 
-    UAVTelemetryService.Start();
+    m_pUAVTelemetryService->Start();
 }
 
 void GCSMainWindow::StopUAVTelemetry()
 {
-    UAVTelemetryService.Stop();
+    if (!m_pUAVTelemetryService)
+    {
+        return;
+    }
+    m_pUAVTelemetryService->Stop();
 }
 
 void GCSMainWindow::closeEvent(QCloseEvent* CloseEvent)

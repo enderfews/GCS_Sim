@@ -13,12 +13,10 @@ using namespace std;
 /*
 	Telemetry Service in charge of receiving and decoding data to display
 */
-template<class InputClass, class DecoderClass>
+
 class TelemetryService
 {
 	using OnTelemetryGatheredCallback = function<void(UAVState&)>;
-	static_assert(is_base_of_v<ITelemetryInput, InputClass>, "TelemetryService::InitializeTelemetryInput - InputClass must inherit from ITelemetryInput");
-	static_assert(is_base_of_v<ITelemetryDecoder, DecoderClass>, "TelemetryService::InitializeTelemetryDecoder - DecoderClass must inherit from ITelemetryDecoder");
 
 public:
 	TelemetryService()
@@ -26,8 +24,6 @@ public:
 		, m_Decoder(nullptr)
 		, m_CachedState({})
 	{
-		InitializeTelemetryInput<InputClass>();
-		InitializeTelemetryDecoder<DecoderClass>();
 	}
 	~TelemetryService()
 	{
@@ -75,7 +71,6 @@ public:
 	{
 		return m_CachedState;
 	}
-private:
 
 	template<class InClass>
 	void InitializeTelemetryInput()
@@ -121,6 +116,7 @@ private:
 	}
 
 
+private:
 
 	void OnTelemetryReceived(const vector<uint8_t>& EncodedData)
 	{
