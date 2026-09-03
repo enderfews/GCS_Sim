@@ -3,7 +3,7 @@ import struct
 import time
 import random
 
-GCS_IP = "192.168.1.100"
+GCS_IP = "192.168.0.243"
 GCS_PORT = 5000
 
 def generate_uav_state():
@@ -54,24 +54,27 @@ def generate_uav_state():
     )
 
 def send_uav_state(sock, payload):
-
-    # 4-byte payload size
     header = struct.pack("!I", len(payload))
+
+    print(
+        f"Sending header={len(header)} bytes, "
+        f"payload={len(payload)} bytes"
+    )
 
     sock.sendall(header + payload)
 
-def main():
+    print("Send completed.")
 
+def main():
     print(f"Connecting to {GCS_IP}:{GCS_PORT}...")
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+    try:
         sock.connect((GCS_IP, GCS_PORT))
-
         print("Connected.")
 
         while True:
-
             payload = generate_uav_state()
 
             send_uav_state(sock, payload)
@@ -80,6 +83,12 @@ def main():
 
             time.sleep(1.0)
 
+    except Exception as e:
+        print(f"ERROR: {type(e).__name__}: {e}")
+
+    finally:
+        print("Closing socket...")
+        sock.close()
 
 if __name__ == "__main__":
     main()

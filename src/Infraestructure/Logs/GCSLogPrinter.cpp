@@ -7,19 +7,19 @@ void GCSLogPrinter::PrintLog(ELogLevel LogLevel, const string& Message)
 	switch (LogLevel)
 	{
 	case ELogLevel::Info:
-		OutMessage = "[INFO]";
+		OutMessage = "[INFO]: ";
 		break;
 	case ELogLevel::Warning:
-		OutMessage = "[WARNING]";
+		OutMessage = "[WARNING]: ";
 		break;
 	case ELogLevel::Error:
-		OutMessage = "[ERROR]";
+		OutMessage = "[ERROR]: ";
 		break;
 	case ELogLevel::Fatal:
-		OutMessage = "[FATAL]";
+		OutMessage = "[FATAL]: ";
 		break;
 	default:
-		OutMessage = "[UNSUPPORTED]";
+		OutMessage = "[UNSUPPORTED]: ";
 		break;
 	}
 	OutMessage += Message;

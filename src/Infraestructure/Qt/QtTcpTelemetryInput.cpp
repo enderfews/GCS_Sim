@@ -90,7 +90,7 @@ void QtTcpTelemetryInput::OnNewConnection()
 	m_pClientTcpSocket = IncomingUAVSocket;
 	QObject::connect(m_pClientTcpSocket, &QTcpSocket::readyRead, this, &QtTcpTelemetryInput::OnReadyRead);
 	QObject::connect(m_pClientTcpSocket, &QTcpSocket::disconnected, this, &QtTcpTelemetryInput::OnDisconnected);
-
+	QObject::connect(m_pClientTcpSocket, &QTcpSocket::errorOccurred, this, &QtTcpTelemetryInput::OnTcpError);
 	stringstream Message;
 	Message << " Telemetry client connected from" /*<< m_pClientTcpSocket->peerAddress().toString() << m_pClientTcpSocket->peerPort()*/;
 	GCSLog::GetInstance().Log(ELogLevel::Info, Message.str());
@@ -98,7 +98,7 @@ void QtTcpTelemetryInput::OnNewConnection()
 
 void QtTcpTelemetryInput::OnReadyRead()
 {
-	if (m_pClientTcpSocket)
+	if (!m_pClientTcpSocket)
 	{
 		GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG(" Invalid TCP socket"));
 		return;
@@ -120,6 +120,16 @@ void QtTcpTelemetryInput::OnDisconnected()
 	}
 
 	m_CachedBuffer.clear();
+}
+
+void QtTcpTelemetryInput::OnTcpError(QAbstractSocket::SocketError socketError)
+{
+
+	GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG(" called"));
+	if (m_pClientTcpSocket)
+	{
+		GCSLog::GetInstance().Log(ELogLevel::Error, m_pClientTcpSocket->errorString().toStdString());
+	}
 }
 
 void QtTcpTelemetryInput::ProcessBuffer()

@@ -2,4 +2,4 @@
 
 #define STRINGIFY_TOKEN(x) #x
 
-#define FUNCTION_MSG(x) __FUNCTION__##x
+#define FUNCTION_MSG(x) __FUNCTION__##" "##x

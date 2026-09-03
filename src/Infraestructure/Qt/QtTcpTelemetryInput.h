@@ -28,11 +28,12 @@ public:
 	void SetTelemetryCallback(OnTelemetryReceivedCallback Callback) override;
 
 private slots:
-	// Slot functions to handle TCP data
-
+	// Slot function to handle TCP server signal
 	void OnNewConnection();
+	//Slot functions to handle TCP socket signals
 	void OnReadyRead();
 	void OnDisconnected();
+	void OnTcpError(QAbstractSocket::SocketError socketError);
 
 private:
 
