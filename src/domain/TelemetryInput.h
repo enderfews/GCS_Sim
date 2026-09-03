@@ -18,7 +18,6 @@ public:
     virtual void Start() = 0;
     virtual void Stop() = 0;
     virtual void SetTelemetryCallback(OnTelemetryReceivedCallback Callback) = 0;
-    virtual const vector<uint8_t>& GetCachedRawTelemetryData() const = 0;
 
     
 };

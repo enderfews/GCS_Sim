@@ -25,7 +25,6 @@ public:
 
 	void Start() override;
 	void Stop() override;
-
 	void SetTelemetryCallback(OnTelemetryReceivedCallback Callback) override;
 
 private slots:
@@ -46,5 +45,5 @@ private:
 	QByteArray m_CachedBuffer;
 	static constexpr int Port = 5000;
 	static constexpr int HeaderSize = 4;
-	static constexpr QHostAddress::SpecialAddress Address = QHostAddress::LocalHost;
+	static constexpr QHostAddress::SpecialAddress Address = QHostAddress::AnyIPv4;
 };

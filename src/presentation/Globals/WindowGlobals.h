@@ -14,3 +14,6 @@
 
 #define SUBTITLE_LABEL_NAME "Telemetry & command interface"
 #define SUBTITLE_LABEL_STYLESHEET "font-size: 13px; color: #9aa0a6;"
+
+
+#define USE_TCP 1

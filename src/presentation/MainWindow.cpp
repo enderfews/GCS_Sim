@@ -5,7 +5,10 @@
 #include <QNetworkDatagram>// Include the QNetworkDatagram header for handling incoming UDP datagrams
 #include <QHBoxLayout> //Allow to desing better IU 
 #include "presentation/Telemetry/Qt/QtTelemetryPanel.h"
-
+#include "Infraestructure/Qt/QtUdpTelemetryInput.h"
+#include "Infraestructure/Qt/QtUtf8TelemetryDecoder.h"
+#include "Infraestructure/Qt/QtTcpTelemetryInput.h"
+#include "Infraestructure/Qt/QtTcpTelemetryDecoder.h"
 
 GCSMainWindow::GCSMainWindow(QWidget* Parent)
 	: QWidget(Parent)
@@ -49,8 +52,14 @@ void GCSMainWindow::StartUAVTelemetry()
     if (!m_pUAVTelemetryService)
     {
         m_pUAVTelemetryService = make_unique<TelemetryService>();
+
+#if defined(USE_TCP) && USE_TCP //For testing purposes
+        m_pUAVTelemetryService->InitializeTelemetryInput<QtTcpTelemetryInput>();
+        m_pUAVTelemetryService->InitializeTelemetryDecoder<QtTcpTelemetryDecoder>();
+#else
         m_pUAVTelemetryService->InitializeTelemetryInput<QtUdpTelemetryInput>();
         m_pUAVTelemetryService->InitializeTelemetryDecoder<QtUtf8TelemetryDecoder>();
+#endif
     }
     m_pUAVTelemetryService->SetTelemetryServiceCallback([this](UAVState& State)
         {

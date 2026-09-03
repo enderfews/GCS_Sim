@@ -1,3 +1,4 @@
+#include "QtTcpTelemetryInput.h"
 
 #include "QtTcpTelemetryInput.h"
 #include "application/Logs/LogManager.h"

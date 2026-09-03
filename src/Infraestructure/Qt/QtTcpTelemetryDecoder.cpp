@@ -1,9 +1,11 @@
 
 #include "QtTcpTelemetryDecoder.h"
+#include "domain/UAV_Types.h"
+
 
 bool QtTcpTelemetryDecoder::Decode(const vector<uint8_t>& EncodedData, UAVState& OutUAVState)
 {
-    if (Data.size() != PacketSize)
+    if (EncodedData.size() != PacketSize)
     {
         return false;
     }

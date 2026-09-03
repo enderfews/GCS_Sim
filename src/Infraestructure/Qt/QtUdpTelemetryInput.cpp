@@ -39,11 +39,6 @@ void QtUdpTelemetryInput::SetTelemetryCallback(OnTelemetryReceivedCallback Callb
 	m_bIsCallbcackSet = true;
 }
 
-const vector<uint8_t>& QtUdpTelemetryInput::GetCachedRawTelemetryData() const
-{
-	return m_CachedRawData;
-}
-
 void QtUdpTelemetryInput::receiveUdpDatagram()
 {
 	if (!m_bIsCallbcackSet)

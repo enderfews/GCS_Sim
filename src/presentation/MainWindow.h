@@ -12,8 +12,6 @@
 #include <QCloseEvent> // Full definition of QCloseEvent, needed to call event->accept()
 #include <QTimer> // Needed for the alarm banner's blinking behavior
 #include "application/TelemetryService.h"
-#include "Infraestructure/Qt/QtUdpTelemetryInput.h"
-#include "Infraestructure/Qt/QtUtf8TelemetryDecoder.h"
 #include <memory>
 class QtUAVTelemetryPanel;
 

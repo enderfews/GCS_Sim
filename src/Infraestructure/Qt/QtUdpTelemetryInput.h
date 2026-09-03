@@ -20,7 +20,6 @@ public:
 	virtual void Start() override;
 	virtual void Stop() override;
 	virtual void SetTelemetryCallback(OnTelemetryReceivedCallback Callback) override;
-	virtual const vector<uint8_t>& GetCachedRawTelemetryData() const override;
 
 private:
 	bool m_bIsCallbcackSet = false;
