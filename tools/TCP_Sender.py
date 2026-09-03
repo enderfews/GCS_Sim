@@ -30,26 +30,21 @@ def generate_uav_state():
     gps_valid = random.choice([True, False])
 
     return struct.pack(
-        "!fffffffffffffffB",
+        "!ffffffffffffffB",
         latitude,
         longitude,
         altitude,
-
         roll,
         pitch,
         yaw,
-
         north,
         east,
         down,
-
         voltage,
         current,
         percentage,
-
         ground_speed,
         air_speed,
-
         int(gps_valid)
     )
 
