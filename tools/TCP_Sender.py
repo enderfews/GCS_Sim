@@ -72,19 +72,23 @@ def main():
 
     try:
         sock.connect((GCS_IP, GCS_PORT))
-        print("Connected.")
+        print("Connected!")
 
         while True:
             payload = generate_uav_state()
 
+            print(f"Sending {len(payload)} bytes...")
             send_uav_state(sock, payload)
-
-            print(f"Sent {len(payload)} bytes")
+            print("Send completed.")
 
             time.sleep(1.0)
 
     except Exception as e:
-        print(f"ERROR: {type(e).__name__}: {e}")
+        print(f"\n!!! PYTHON ERROR !!!")
+        print(f"Type: {type(e).__name__}")
+        print(f"Message: {e}")
+
+        input("\nPress ENTER to close...")
 
     finally:
         print("Closing socket...")
