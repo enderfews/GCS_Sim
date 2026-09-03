@@ -3,6 +3,11 @@
 #include <QNetworkDatagram>
 #include "application/Logs/LogManager.h"
 
+QtUdpTelemetryInput::~QtUdpTelemetryInput()
+{
+	/*Stop();*/
+}
+
 void QtUdpTelemetryInput::Start()
 {
 	if (!m_bIsCallbcackSet)

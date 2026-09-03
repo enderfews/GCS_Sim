@@ -15,6 +15,8 @@ class QtUdpTelemetryInput
 {
 	Q_OBJECT
 public:
+	virtual ~QtUdpTelemetryInput() override;
+
 	virtual void Start() override;
 	virtual void Stop() override;
 	virtual void SetTelemetryCallback(OnTelemetryReceivedCallback Callback) override;
