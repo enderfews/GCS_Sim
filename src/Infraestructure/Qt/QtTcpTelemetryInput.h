@@ -26,7 +26,6 @@ class QtTcpTelemetryInput
 public:
 
 	virtual ~QtTcpTelemetryInput() override;
-
 	void Start() override;
 	void Stop() override;
 	void SetTelemetryCallback(OnTelemetryReceivedCallback Callback) override;
@@ -36,8 +35,11 @@ private slots:
 	void OnTelemetryReceived(const QByteArray& Data);
 
 	//Slots to bind into the worker
+	// OnWorkerStarted is called after QtTcpTelemetryWorker calls its signal started
 	void OnWorkerStarted();
+	// OnWorkerStopped is called after QtTcpTelemetryWorker calls its signal stopped
 	void OnWorkerStopped();
+	// OnWorkerError Signal called from the worker to rise messages
 	void OnWorkerError(const QString& Message);
 
 private:

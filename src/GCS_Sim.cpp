@@ -8,16 +8,16 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	cout << "Initialize GCS app." << endl;
 	GCSLog::GetInstance().AddPrinter<GCSLogPrinter>();
 	//Create the application object
-	QApplication QTApp(argc, argv);
+	GCSLog::GetInstance().Log(ELogLevel::Info, "Initialize GCS app");
+	QApplication QtApp(argc, argv);
 	//Initialize the ground control window
 	GCSMainWindow GCSWindow = GCSMainWindow(nullptr);
 	GCSWindow.StartUAVTelemetry();
 	GCSWindow.show();
 
-	int result = QTApp.exec();
+	int result = QtApp.exec();
 
 	return result;
 }

@@ -14,6 +14,10 @@
 
 class QLabel;
 
+/*
+* Modular Qt interface that displays the UAV state data. This UI lacks in any
+* business logic, It just receives the UAV data already processed and displays it
+*/
 class QtUAVTelemetryPanel : public QWidget
 {
     Q_OBJECT

@@ -8,6 +8,9 @@
 struct UAVState;
 using namespace std;
 
+/*
+* @brief ITelemetryDecoder implementation of Qt for TCP
+*/
 class QtTcpTelemetryDecoder
 	: public QObject
 	, public ITelemetryDecoder
@@ -15,7 +18,11 @@ class QtTcpTelemetryDecoder
 	Q_OBJECT
 
 public:
-
+	/*
+	* @brief Decodes the incoming raw data and transforms it into UAVState data struct.
+	* @param EncodedData - A vector reference of bytes that represents the received data
+	* @param OutUAVState - an output reference that returns the decoded data into a struct format
+	*/
 	virtual bool Decode(const vector<uint8_t>& EncodedData, UAVState& OutUAVState) override;
 
 private:

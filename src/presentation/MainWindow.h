@@ -17,6 +17,11 @@ class QtUAVTelemetryPanel;
 
 using namespace std;
 
+/*
+* @brief The main window of the presentation layer for the GCS application.
+* It's the root class and the mediator of all components of the UI. All services
+* used are initialized and managed here.
+*/
 class GCSMainWindow : public QWidget
 {
 	//Macro to enable Qt's meta-object features, such as signals and slots

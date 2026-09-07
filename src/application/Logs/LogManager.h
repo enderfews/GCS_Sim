@@ -10,17 +10,36 @@
 
 using namespace std;
 /*
-	Singleton class for the log system
+	@brief Singleton class for the log system. This manager is in charge of
+	printing all messages to the different logs systems (aka ILogPrinter).
+	By default, there's a console log implemented and added at the beginning 
+	of main() function. You can implement and add/remove these log systems on
+	demand. Create a class that implements ILogPrinter and added it to the GCSLog
 */
-
 class GCSLog
 {
 public:
+	/*
+		@brief Gets the instance of this singleton.NOTE: Do not try to save the
+		reference into a variable, forbidden.
+		@return - The instance of GCSLog
+	*/
 	static GCSLog& GetInstance();
 
-	//Display log messages to all log adapters
+	/*
+		@brief Print the message to the different log systems
+		@param Level - Determines the level of this log (info, warning, error, etc)
+		@param Message - The log message to display to the different and registered logs
+	*/
 	void Log(const ELogLevel Level, const string& Message);
 
+	/*
+		@brief Adds a new log printer into the GCSLog. Log printers are the
+		different implementations of the logs that allows you to propagate the
+		message into the different areas (Ex: console command, QtWidget log, File log, etc).
+		NOTE: This function is a templated function and receives the Log Printer class, if
+		the class you provide doesn't inherit from ILogPrinter, It will throw compile errors
+	*/
 	template<class LogClass>
 	void AddPrinter()
 	{
@@ -37,6 +56,14 @@ public:
 		m_LogPrinters.emplace(PrinterName, make_unique<LogClass>());
 #endif
 	}
+
+	/*
+		@brief Removes an existing log printer from the GCSLog. Log printers are the
+		different implementations of the logs that allows you to propagate the
+		message into the different areas (Ex: console command, QtWidget log, File log, etc).
+		NOTE: This function is a templated function and receives the Log Printer class, if
+		the class you provide doesn't inherit from ILogPrinter, It will throw compile errors
+	*/
 	template<class LogClass>
 	void RemovePrinter()
 	{

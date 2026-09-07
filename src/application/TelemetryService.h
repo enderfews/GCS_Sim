@@ -11,9 +11,20 @@
 using namespace std;
 
 /*
-	Telemetry Service in charge of receiving and decoding data to display
-*/
+	@brief Telemetry Service in charge of receiving and decoding data to display.
+	This class uses 2 ports to work, ITelemetryInput and ITelemetryDecoder. The first
+	one listens for telemetry data and the second one decodes the received one. 
+	Example to use:
 
+		TelemetryService pTelemetryService = new TelemetryService();
+		pTelemetryService->InitializeTelemetryInput<QtMyTelemetryInputImplementation>();
+		pTelemetryService->InitializeTelemetryDecoder<QtMyTelemetryImplementation>();
+		pTelemetryService->SetTelemetryServiceCallback([this](UAVState& State)
+			{
+				OnTelemetryReceived(State);
+			});
+		pTelemetryService->Start();
+*/
 class TelemetryService
 {
 	using OnTelemetryGatheredCallback = function<void(UAVState&)>;
@@ -30,11 +41,19 @@ public:
 		ShutdownTelemetryInput();
 		ShutdownTelemetryDecoder();
 	}
+	/*
+		@brief Function to set the callback on the service when the telemetry
+		has been received and decoded sucessfully
+	*/
 	void SetTelemetryServiceCallback(OnTelemetryGatheredCallback Callback)
 	{
 		m_TelemetryServiceGatheredCallback = Callback;
 	}
 
+	/*
+		@Brief Starts the telemetry service to listen and decode data.
+		NOTE: DO NOT FORGET TO call Initialize functions to initialize the ports with their adapters
+	*/
 	void Start()
 	{
 		if (m_bHasStarted)
@@ -51,6 +70,10 @@ public:
 		m_bHasStarted = true;
 	}
 
+	/*
+	@Brief Stops the telemetry service to listen and decode data.
+	NOTE: DO NOT FORGET TO call Initialize functions to initialize the ports with their adapters
+*/
 	void Stop()
 	{
 		if (!m_bHasStarted)
@@ -67,11 +90,21 @@ public:
 		m_bHasStarted = false;
 	}
 
+	/*
+		@brief Get the last cached UAV state
+		@return - A reference to the UAV state data
+	*/
 	const UAVState& GetCurrentUAVState() const
 	{
 		return m_CachedState;
 	}
 
+	/*
+		@brief Initialize the telemetry input port. Provide the adapter or class
+		that implements ITelemetryInput, if not, it will throw compile errors. You
+		can initialize on runtime a different adapter, It will stop the previous adapter
+		or implementation, destroy it and initialize the new one.
+	*/
 	template<class InClass>
 	void InitializeTelemetryInput()
 	{
@@ -93,11 +126,21 @@ public:
 		}
 	}
 
+	/*
+	@brief Shuts down and stops the telemetry input port
+	*/
 	void ShutdownTelemetryInput()
 	{
 		Stop();
 		m_Input.reset();
 	}
+
+	/*
+	@brief Initialize the telemetry decoder port. Provide the adapter or class
+	that implements ITelemetryDecoder, if not, it will throw compile errors. You
+	can initialize on runtime a different adapter, It will stop the previous adapter
+	or implementation, destroy it and initialize the new one.
+	*/
 	template<class DecClass>
 	void InitializeTelemetryDecoder()
 	{

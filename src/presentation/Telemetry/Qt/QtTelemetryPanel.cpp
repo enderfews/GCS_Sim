@@ -1,6 +1,5 @@
 #include "QtTelemetryPanel.h"
 #include <QVBoxLayout>
-#include <QNetworkDatagram>// Include the QNetworkDatagram header for handling incoming UDP datagrams
 #include <QHBoxLayout> //Allow to desing better IU 
 #include <QGroupBox>
 
