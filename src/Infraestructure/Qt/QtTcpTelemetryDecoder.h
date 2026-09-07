@@ -21,5 +21,5 @@ public:
 private:
 	static float ReadFloatBE(const uint8_t* Data);
 
-	static constexpr size_t PacketSize = 61;
+	static constexpr size_t PackageSize = 61;
 };

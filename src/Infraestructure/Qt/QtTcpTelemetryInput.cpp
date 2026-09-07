@@ -4,7 +4,7 @@
 #include "application/Logs/LogManager.h"
 #include "Utils/GCSUtils.h"
 #include <sstream>
-
+#include <QThread>
 
 QtTcpTelemetryInput::~QtTcpTelemetryInput()
 {
@@ -45,13 +45,14 @@ void QtTcpTelemetryInput::Stop()
 		m_pClientTcpSocket = nullptr;
 	}
 
+	QObject::disconnect(m_pServer, &QTcpServer::newConnection, this, &QtTcpTelemetryInput::OnNewConnection);
 	if (m_pServer)
 	{
 		m_pServer->close();
 		m_pServer->deleteLater();
 		m_pServer = nullptr;
 	}
-	QObject::disconnect(m_pServer, &QTcpServer::newConnection, this, &QtTcpTelemetryInput::OnNewConnection);
+
 	m_CachedBuffer.clear();
 	m_bIsCallbcackSet = false;
 }

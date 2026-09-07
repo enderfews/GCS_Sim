@@ -1,14 +1,16 @@
 
 #include "QtTcpTelemetryDecoder.h"
 #include "domain/UAV_Types.h"
-
+#include "application/Logs/LogManager.h"
+#include "Utils/GCSUtils.h"
 
 bool QtTcpTelemetryDecoder::Decode(const vector<uint8_t>& EncodedData, UAVState& OutUAVState)
 {
-    if (EncodedData.size() != PacketSize)
-    {
-        return false;
-    }
+    //if (EncodedData.size() != PackageSize)
+    //{
+    //    GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Wrong package size to decode"));
+    //    return false;
+    //}
 
     std::size_t Offset = 0;
 

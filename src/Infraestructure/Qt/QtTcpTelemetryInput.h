@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <vector>
 
+class QThread;
 class QByteArray;
 /*
 	@brief Telemetry input port implementation that uses Qt network (TCP)
@@ -41,6 +42,7 @@ private:
 
 	QTcpServer* m_pServer = nullptr;
 	QTcpSocket* m_pClientTcpSocket = nullptr;
+	QThread* m_pInputThread = nullptr;
 	bool m_bIsCallbcackSet = false;
 	OnTelemetryReceivedCallback m_Callback;
 	QByteArray m_CachedBuffer;
