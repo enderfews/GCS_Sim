@@ -5,7 +5,10 @@
 #include <QObject>
 #include <QUdpSocket>
 #include <vector>
-class QUdpSocket;
+
+class QThread;
+class QByteArray;
+class QtUdpTelemetryWorker;
 
 using namespace std;
 
@@ -21,16 +24,21 @@ public:
 	virtual void Stop() override;
 	virtual void SetTelemetryCallback(OnTelemetryReceivedCallback Callback) override;
 
+private slots:
+
+	void OnDatagramReceived(const QByteArray& Data);
+
+	//Slots to bind into the worker
+	void OnWorkerStarted();
+	void OnWorkerStopped();
+	void OnWorkerError(const QString& Message);
 private:
 	bool m_bIsCallbcackSet = false;
 	OnTelemetryReceivedCallback m_CachedCallback;
-	QUdpSocket* m_pUdpSocket = nullptr;
+	QtUdpTelemetryWorker* m_pWorker = nullptr;
+	QThread* m_pInputThread = nullptr;
 	vector<uint8_t> m_CachedRawData;
 
 	static const int Port = 5000;
 	static const QHostAddress::SpecialAddress Address = QHostAddress::LocalHost;
-private slots:
-
-	//Slot function to handle incoming UDP data 
-	void receiveUdpDatagram();
 };
