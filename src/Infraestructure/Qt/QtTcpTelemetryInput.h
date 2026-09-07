@@ -11,6 +11,9 @@
 
 class QThread;
 class QByteArray;
+class QtTcpTelemetryWorker;
+
+
 /*
 	@brief Telemetry input port implementation that uses Qt network (TCP)
 */
@@ -29,24 +32,22 @@ public:
 	void SetTelemetryCallback(OnTelemetryReceivedCallback Callback) override;
 
 private slots:
-	// Slot function to handle TCP server signal
-	void OnNewConnection();
-	//Slot functions to handle TCP socket signals
-	void OnReadyRead();
-	void OnDisconnected();
-	void OnTcpError(QAbstractSocket::SocketError socketError);
+
+	void OnTelemetryReceived(const QByteArray& Data);
+
+	//Slots to bind into the worker
+	void OnWorkerStarted();
+	void OnWorkerStopped();
+	void OnWorkerError(const QString& Message);
 
 private:
-
-	void ProcessBuffer();
 
 	QTcpServer* m_pServer = nullptr;
 	QTcpSocket* m_pClientTcpSocket = nullptr;
 	QThread* m_pInputThread = nullptr;
+	QtTcpTelemetryWorker* m_pWorker = nullptr;
 	bool m_bIsCallbcackSet = false;
 	OnTelemetryReceivedCallback m_Callback;
-	QByteArray m_CachedBuffer;
 	static constexpr int Port = 5000;
-	static constexpr int HeaderSize = 4;
 	static constexpr QHostAddress::SpecialAddress Address = QHostAddress::AnyIPv4;
 };

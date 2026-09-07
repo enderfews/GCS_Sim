@@ -1,59 +1,65 @@
 #include "QtTcpTelemetryInput.h"
-
-#include "QtTcpTelemetryInput.h"
 #include "application/Logs/LogManager.h"
 #include "Utils/GCSUtils.h"
 #include <sstream>
 #include <QThread>
+#include <QMetaObject>
+#include "Infraestructure/Qt/Workers/TelemetryInput/QtTcpTelemetryWorker.h"
+
 
 QtTcpTelemetryInput::~QtTcpTelemetryInput()
 {
-	/*Stop();*/
+	Stop();
 }
 
 void QtTcpTelemetryInput::Start()
 {
 	if (!m_bIsCallbcackSet)
 	{
-		GCSLog::GetInstance().Log(ELogLevel::Warning, FUNCTION_MSG(" Callback is not set in telemetry input"));
+		GCSLog::GetInstance().Log(ELogLevel::Warning, FUNCTION_MSG("Callback is not set in telemetry input"));
 	}
 
-	m_pServer = new QTcpServer(this);
-
-	QObject::connect(m_pServer, &QTcpServer::newConnection, this, &QtTcpTelemetryInput::OnNewConnection);
-
-	if (!m_pServer->listen(Address, Port))
+	if (m_pInputThread)
 	{
-		stringstream WarningMessage; 
-		WarningMessage << " Failed to start TCP telemetry server: " /*<< m_pServer->errorString()*/;
-		GCSLog::GetInstance().Log(ELogLevel::Warning, WarningMessage.str());
-		QObject::disconnect(m_pServer, &QTcpServer::newConnection, this, &QtTcpTelemetryInput::OnNewConnection);
+		GCSLog::GetInstance().Log(ELogLevel::Warning, FUNCTION_MSG("Telemetry input already running"));
 		return;
 	}
 
-	stringstream Message;
-	Message << "TCP telemetry server listening on port " << Port;
-	GCSLog::GetInstance().Log(ELogLevel::Info, Message.str());
+	m_pInputThread = new QThread();
+	m_pWorker = new QtTcpTelemetryWorker(Address, Port);
+	m_pWorker->moveToThread(m_pInputThread);
+	//The worker will start the moment the thread does
+	QObject::connect(m_pInputThread, &QThread::started, m_pWorker, &QtTcpTelemetryWorker::Start);
+	QObject::connect(m_pWorker, &QtTcpTelemetryWorker::Started, this, &QtTcpTelemetryInput::OnWorkerStarted, Qt::QueuedConnection);
+	QObject::connect(m_pWorker, &QtTcpTelemetryWorker::Stopped, this, &QtTcpTelemetryInput::OnWorkerStopped, Qt::QueuedConnection);
+	QObject::connect(m_pWorker, &QtTcpTelemetryWorker::Error, this, &QtTcpTelemetryInput::OnWorkerError, Qt::QueuedConnection);
+	QObject::connect(m_pWorker, &QtTcpTelemetryWorker::TelemetryReceived, this, &QtTcpTelemetryInput::OnTelemetryReceived, Qt::QueuedConnection);
+
+	m_pInputThread->start();
 }
 
 void QtTcpTelemetryInput::Stop()
 {
-	if (m_pClientTcpSocket)
+	if (!m_pInputThread || !m_pWorker)
 	{
-		m_pClientTcpSocket->disconnectFromHost();
-		m_pClientTcpSocket->deleteLater();
-		m_pClientTcpSocket = nullptr;
+		GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Invalid worker and/or thread"));
+		return;
 	}
 
-	QObject::disconnect(m_pServer, &QTcpServer::newConnection, this, &QtTcpTelemetryInput::OnNewConnection);
-	if (m_pServer)
-	{
-		m_pServer->close();
-		m_pServer->deleteLater();
-		m_pServer = nullptr;
-	}
+	/*
+	* Since the worker is not in the main thread, we must not call Stop() directly 
+	*/
+	QMetaObject::invokeMethod(m_pWorker, &QtTcpTelemetryWorker::Stop, Qt::BlockingQueuedConnection);
 
-	m_CachedBuffer.clear();
+	m_pInputThread->quit();
+	m_pInputThread->wait();
+
+	delete m_pWorker;
+	m_pWorker = nullptr;
+
+	delete m_pInputThread;
+	m_pInputThread = nullptr;
+
 	m_bIsCallbcackSet = false;
 }
 
@@ -63,111 +69,31 @@ void QtTcpTelemetryInput::SetTelemetryCallback(OnTelemetryReceivedCallback Callb
 	m_bIsCallbcackSet = true;
 }
 
-void QtTcpTelemetryInput::OnNewConnection()
+void QtTcpTelemetryInput::OnTelemetryReceived(const QByteArray& Data)
 {
-	if (!m_pServer)
+	if (!m_bIsCallbcackSet)
 	{
-		GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG(" Invalid TCP server"));
 		return;
 	}
 
-	QTcpSocket* IncomingUAVSocket = m_pServer->nextPendingConnection();
-	if (!IncomingUAVSocket)
-	{
-		GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG(" Invalid TCP socket"));
-		return;
-	}
-
-	//We only allow one telemetry client for now
-	//Nice to have: handle multiple connections
-	if (m_pClientTcpSocket)
-	{
-		GCSLog::GetInstance().Log(ELogLevel::Warning, FUNCTION_MSG(" TCP Telemetry client already connected"));
-		IncomingUAVSocket->disconnectFromHost();
-		IncomingUAVSocket->deleteLater();
-		return;
-	}
-
-	m_pClientTcpSocket = IncomingUAVSocket;
-	QObject::connect(m_pClientTcpSocket, &QTcpSocket::readyRead, this, &QtTcpTelemetryInput::OnReadyRead);
-	QObject::connect(m_pClientTcpSocket, &QTcpSocket::disconnected, this, &QtTcpTelemetryInput::OnDisconnected);
-	QObject::connect(m_pClientTcpSocket, &QTcpSocket::errorOccurred, this, &QtTcpTelemetryInput::OnTcpError);
-	stringstream Message;
-	Message << " Telemetry client connected from" /*<< m_pClientTcpSocket->peerAddress().toString() << m_pClientTcpSocket->peerPort()*/;
-	GCSLog::GetInstance().Log(ELogLevel::Info, Message.str());
+	std::vector<uint8_t> TelemetryData(reinterpret_cast<const uint8_t*>(Data.constData()), reinterpret_cast<const uint8_t*>(Data.constData()) + Data.size());
+	m_Callback(TelemetryData);
 }
 
-void QtTcpTelemetryInput::OnReadyRead()
+void QtTcpTelemetryInput::OnWorkerStarted()
 {
-	if (!m_pClientTcpSocket)
-	{
-		GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG(" Invalid TCP socket"));
-		return;
-	}
-
-	//We can't assure readAll() has the entire and completed datagram
-	//We cache the pieces and we'll call the callback when It's done
-	m_CachedBuffer.append(m_pClientTcpSocket->readAll());
-	ProcessBuffer();
+	GCSLog::GetInstance().Log(ELogLevel::Info, "TCP telemetry server started");
 }
 
-void QtTcpTelemetryInput::OnDisconnected()
+void QtTcpTelemetryInput::OnWorkerStopped()
 {
-	GCSLog::GetInstance().Log(ELogLevel::Info, FUNCTION_MSG(" Telemetry client disconnected"));
-	if (m_pClientTcpSocket)
-	{
-		m_pClientTcpSocket->deleteLater();
-		m_pClientTcpSocket = nullptr;
-	}
-
-	m_CachedBuffer.clear();
+	GCSLog::GetInstance().Log(ELogLevel::Info, "TCP telemetry server stopped");
 }
 
-void QtTcpTelemetryInput::OnTcpError(QAbstractSocket::SocketError socketError)
+void QtTcpTelemetryInput::OnWorkerError(const QString& Message)
 {
-
-	GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG(" called"));
-	if (m_pClientTcpSocket)
-	{
-		GCSLog::GetInstance().Log(ELogLevel::Error, m_pClientTcpSocket->errorString().toStdString());
-	}
+	GCSLog::GetInstance().Log(ELogLevel::Error, Message.toStdString());
 }
 
-void QtTcpTelemetryInput::ProcessBuffer()
-{
-	while (true)
-	{
-		// We need at least  bytes to know the payload size.
-		if (m_CachedBuffer.size() < HeaderSize)
-		{
-			return;
-		}
-
-		QDataStream stream(m_CachedBuffer);
-		stream.setByteOrder(QDataStream::BigEndian);
-
-		uint32_t PayloadSize = 0;
-		stream >> PayloadSize;
-
-		// Wait until the complete payload has arrived.
-		if (m_CachedBuffer.size() < HeaderSize + PayloadSize)
-		{
-			return;
-		}
-
-		QByteArray Payload = m_CachedBuffer.mid(HeaderSize, PayloadSize);
-		m_CachedBuffer.remove(0, HeaderSize + PayloadSize);
-
-		if (m_Callback)
-		{
-			std::vector<uint8_t> Data(
-				reinterpret_cast<const uint8_t*>(Payload.constData()),
-				reinterpret_cast<const uint8_t*>(Payload.constData())
-				+ Payload.size());
-
-			m_Callback(Data);
-		}
-	}
-}
 
 
