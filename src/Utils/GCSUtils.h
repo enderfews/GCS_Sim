@@ -12,5 +12,6 @@ namespace GCS
 	namespace Time
 	{
 		string unixTimeToHumanReadable(long long seconds);
+		void GetDateAndTimeNow(string& OutDateTime, bool bUseBrackets = true);
 	}
 }

@@ -9,6 +9,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	GCSLog::GetInstance().AddPrinter<GCSLogPrinter>();
+	//GCSLog::GetInstance().AddPrinter<LogFileWriter>();
 	//Create the application object
 	GCSLog::GetInstance().Log(ELogLevel::Info, "Initialize GCS app");
 	QApplication QtApp(argc, argv);

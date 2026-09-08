@@ -1,5 +1,5 @@
 #include "GCSUtils.h"
-
+#include <ctime>
 string GCS::Time::unixTimeToHumanReadable(long long seconds)
 {
 
@@ -112,4 +112,22 @@ string GCS::Time::unixTimeToHumanReadable(long long seconds)
 
     // Return the time
     return ans;
+}
+
+void GCS::Time::GetDateAndTimeNow(string& OutDateTime, bool bUseBrackets /*= true*/)
+{
+    // Get current timestamp
+    time_t now = time(0);
+    tm* timeinfo = localtime(&now);
+    char timestamp[20];
+    strftime(timestamp, sizeof(timestamp),"%Y-%m-%d %H:%M:%S", timeinfo);
+    if (!bUseBrackets)
+    {
+        OutDateTime += timestamp;
+        return;
+    }
+
+    OutDateTime += "[";
+    OutDateTime += timestamp;
+    OutDateTime += "]";
 }

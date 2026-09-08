@@ -9,7 +9,7 @@
 #include <QApplication>
 #include "application/Logs/LogManager.h"
 #include "Infraestructure/Logs/GCSLogPrinter.h"
-
+#include "Infraestructure/Logs/File/LogFileWriter.h"
 //Testing services and ports
 #include "application/TelemetryService.h"
 #include "Infraestructure/Qt/QtUdpTelemetryInput.h"
