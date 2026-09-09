@@ -1,3 +1,3 @@
 #pragma once
 
-#define GCS_DEBUG 1
+#define GCS_DEBUG _DEBUG

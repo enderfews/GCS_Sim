@@ -32,4 +32,5 @@ private:
 	string m_sFileName;
 	static const string FileBaseName;
 	static const string FileFormat;
+	static const string LogFolder;
 };

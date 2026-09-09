@@ -114,20 +114,12 @@ string GCS::Time::unixTimeToHumanReadable(long long seconds)
     return ans;
 }
 
-void GCS::Time::GetDateAndTimeNow(string& OutDateTime, bool bUseBrackets /*= true*/)
+void GCS::Time::GetDateAndTimeNow(string& OutDateTime, const string& format /*= "%Y-%m-%d %H:%M:%S"*/)
 {
     // Get current timestamp
     time_t now = time(0);
     tm* timeinfo = localtime(&now);
     char timestamp[20];
-    strftime(timestamp, sizeof(timestamp),"%Y-%m-%d %H:%M:%S", timeinfo);
-    if (!bUseBrackets)
-    {
-        OutDateTime += timestamp;
-        return;
-    }
-
-    OutDateTime += "[";
+    strftime(timestamp, sizeof(timestamp), format.c_str(), timeinfo); 
     OutDateTime += timestamp;
-    OutDateTime += "]";
 }
