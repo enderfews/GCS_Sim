@@ -45,7 +45,7 @@ public:
 	{
 #if defined(GCS_DEBUG) && GCS_DEBUG
 		static_assert(is_base_of_v<ILogPrinter, LogClass>, "GCSLog AddPrinter - LogClass must inherit from ILogPrinter");
-		const string PrinterName = STRINGIFY_TOKEN(LogClass);
+		const string PrinterName = typeid(LogClass).name();
 		const auto it = m_LogPrinters.find(PrinterName);
 		if (it != m_LogPrinters.end())
 		{
@@ -69,7 +69,7 @@ public:
 	{
 #if defined(GCS_DEBUG) && GCS_DEBUG
 		static_assert(is_base_of_v<ILogPrinter, LogClass>, "GCSLog RemovePrinter - LogClass must inherit from ILogPrinter");
-		const string PrinterName = STRINGIFY_TOKEN(LogClass);
+		const string PrinterName = typeid(LogClass).name();
 		const auto it = m_LogPrinters.find(PrinterName);
 		if (it == m_LogPrinters.end())
 		{
