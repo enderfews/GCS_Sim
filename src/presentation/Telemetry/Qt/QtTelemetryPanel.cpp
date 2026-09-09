@@ -290,15 +290,15 @@ void QtUAVTelemetryPanel::UpdatePosition(const Position& Position)
 void QtUAVTelemetryPanel::UpdateAttitude(const Attitude& Attitude)
 {
     m_RollLabel->setText(
-        QString::number(Attitude.roll, 'f', 2) + " °"
+        QString::number(Attitude.roll, 'f', 2) + " ï¿½"
     );
 
     m_PitchLabel->setText(
-        QString::number(Attitude.pitch, 'f', 2) + " °"
+        QString::number(Attitude.pitch, 'f', 2) + " ï¿½"
     );
 
     m_YawLabel->setText(
-        QString::number(Attitude.yaw, 'f', 2) + " °"
+        QString::number(Attitude.yaw, 'f', 2) + " ï¿½"
     );
 }
 

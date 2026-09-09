@@ -35,6 +35,7 @@ find_package(Qt6 REQUIRED COMPONENTS
     Network
     OpenGL
     OpenGLWidgets
+    Gui
 )
 
 # Automatically find all .cpp files inside the src directory
@@ -104,4 +105,5 @@ target_link_libraries(GCS_Sim PRIVATE
     Qt6::Network
     Qt6::OpenGL
     Qt6::OpenGLWidgets
+    Qt6::Gui
 )
