@@ -13,7 +13,10 @@
 #include <QTimer> // Needed for the alarm banner's blinking behavior
 #include "application/TelemetryService.h"
 #include <memory>
+
 class QtUAVTelemetryPanel;
+class QtGraphicTelemetryPanel;
+
 
 using namespace std;
 
@@ -43,8 +46,9 @@ private:
 	QLabel* TitleLabel = nullptr;
 	QLabel* SubtitleLabel = nullptr;
 	QPushButton* buttonReconnet = nullptr;
-	QtUAVTelemetryPanel* TelemetryPanel = nullptr;
 
+	QtUAVTelemetryPanel* TelemetryPanel = nullptr;
+	QtGraphicTelemetryPanel* GraphicTelemetryPanel = nullptr;
 	//App Services
 	unique_ptr<TelemetryService> m_pUAVTelemetryService;
 

@@ -4,11 +4,16 @@
 #include <QVBoxLayout>
 #include <QNetworkDatagram>// Include the QNetworkDatagram header for handling incoming UDP datagrams
 #include <QHBoxLayout> //Allow to desing better IU 
+
 #include "presentation/Telemetry/Qt/QtTelemetryPanel.h"
+#include "presentation/Telemetry/Qt/QtGraphicTelemetryPanel.h"
+
 #include "Infraestructure/Qt/QtUdpTelemetryInput.h"
 #include "Infraestructure/Qt/QtUtf8TelemetryDecoder.h"
 #include "Infraestructure/Qt/QtTcpTelemetryInput.h"
 #include "Infraestructure/Qt/QtTcpTelemetryDecoder.h"
+
+#define USE_GRAPHIC_PANEL 1
 
 GCSMainWindow::GCSMainWindow(QWidget* Parent)
 	: QWidget(Parent)
@@ -42,9 +47,15 @@ GCSMainWindow::GCSMainWindow(QWidget* Parent)
     //Telemetry cards row: the three labels side by side, equal width
 
     //Banners: full width, only one (or none) visible at a time
+#if USE_GRAPHIC_PANEL
+    GraphicTelemetryPanel = new QtGraphicTelemetryPanel(this);
+    Layout->addWidget(GraphicTelemetryPanel);
+    Layout->addSpacing(16);
+#else
     TelemetryPanel = new QtUAVTelemetryPanel(this);
     Layout->addWidget(TelemetryPanel);
     Layout->addSpacing(16);
+#endif
 }
 
 void GCSMainWindow::StartUAVTelemetry()
@@ -88,5 +99,9 @@ void GCSMainWindow::closeEvent(QCloseEvent* CloseEvent)
 
 void GCSMainWindow::OnTelemetryReceived(const UAVState& State)
 {
+#if USE_GRAPHIC_PANEL
+    GraphicTelemetryPanel->SetUAVState(State);
+#else
     TelemetryPanel->SetUAVState(State);
+#endif
 }

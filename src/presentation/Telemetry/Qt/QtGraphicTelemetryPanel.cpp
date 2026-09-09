@@ -7,12 +7,13 @@ QtGraphicTelemetryPanel::QtGraphicTelemetryPanel(QWidget* Parent/* = nullptr*/)
 	: QOpenGLWidget(Parent)
 	, m_UAVState({})
 {
-	setMinimumSize(600, 400); //TODO: No magic numbers
+	setMinimumSize(1000, 800); //TODO: No magic numbers
 }
 
 void QtGraphicTelemetryPanel::SetUAVState(const UAVState& State)
 {
 	m_UAVState = State;
+    update();
 }
 
 void QtGraphicTelemetryPanel::initializeGL()
@@ -30,7 +31,7 @@ void QtGraphicTelemetryPanel::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     QPainter Painter(this);
-    Painter.setPen(Qt::white);
+    Painter.setPen(Qt::green);
 
     Painter.setFont(QFont("Consolas", 14));
     int Y = 30;
