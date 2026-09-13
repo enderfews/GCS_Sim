@@ -34,6 +34,8 @@ public:
 		: m_Input(nullptr)
 		, m_Decoder(nullptr)
 		, m_CachedState({})
+		, m_bHasStarted(false)
+		, m_TelemetryServiceGatheredCallback({})
 	{
 	}
 	~TelemetryService()
@@ -58,6 +60,7 @@ public:
 	{
 		if (m_bHasStarted)
 		{
+			GCSLog::GetInstance().Log(ELogLevel::Info, FUNCTION_MSG("Telemetry already started"));
 			return;
 		}
 
@@ -188,6 +191,6 @@ private:
 	unique_ptr<ITelemetryInput> m_Input;
 	unique_ptr<ITelemetryDecoder> m_Decoder;
 	UAVState m_CachedState;
-	bool m_bHasStarted = false;
+	bool m_bHasStarted;
 	OnTelemetryGatheredCallback m_TelemetryServiceGatheredCallback;
 };

@@ -4,13 +4,9 @@
 #include "Utils/GCSGlobals.h"
 #include "domain/Logs/LogUtils.h"
 
-//#ifndef LOG_FOLDER_DST
-//#define LOG_FOLDER_DST {"Logs" SEPARATOR}
-//#endif // !LOG_FOLDER_DST
 
-const string LogFileWriter::FileBaseName = "Log_";
-const string LogFileWriter::FileFormat = ".txt";
-//const string LogFileWriter::LogFolder = LOG_FOLDER_DST;
+const string LogFileWriter::g_sFileBaseName = "Log_";
+const string LogFileWriter::g_sFileFormat = ".txt";
 LogFileWriter::~LogFileWriter()
 {
 	m_LogFile.close();
@@ -45,7 +41,7 @@ void LogFileWriter::PrintLog(ELogLevel LogLevel, const string& Message)
 
 void LogFileWriter::InitializeFileName()
 {
-	m_sFileName = FileBaseName;
+	m_sFileName = g_sFileBaseName;
 	GCS::Time::GetDateAndTimeNow(m_sFileName, "%Y_%m_%d_%H_%M_%S");
-	m_sFileName += FileFormat;
+	m_sFileName += g_sFileFormat;
 }

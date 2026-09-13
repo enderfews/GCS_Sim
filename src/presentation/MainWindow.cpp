@@ -13,10 +13,15 @@
 #include "Infraestructure/Qt/QtTcpTelemetryInput.h"
 #include "Infraestructure/Qt/QtTcpTelemetryDecoder.h"
 
+//For debugging and testing purposes
 #define USE_GRAPHIC_PANEL 1
 
 GCSMainWindow::GCSMainWindow(QWidget* Parent)
 	: QWidget(Parent)
+    , m_pTitleLabel(nullptr)
+    , m_pSubtitleLabel(nullptr)
+    , m_pTelemetryPanel(nullptr)
+    , m_pGraphicTelemetryPanel(nullptr)
 {
 	setWindowTitle(APP_WINDOW_TITLE);
 
@@ -29,31 +34,27 @@ GCSMainWindow::GCSMainWindow(QWidget* Parent)
     resize(APP_WINDOW_WIDTH, APP_WINDOW_HEIGHT);
 
     //Title and subtitle, centered above everything else
-    TitleLabel = new QLabel(TITLE_LABEL_NAME, this);
-    TitleLabel->setAlignment(Qt::AlignCenter);
-    TitleLabel->setStyleSheet(TITLE_LABEL_STYLESHEET);
+    m_pTitleLabel = new QLabel(TITLE_LABEL_NAME, this);
+    m_pTitleLabel->setAlignment(Qt::AlignCenter);
+    m_pTitleLabel->setStyleSheet(TITLE_LABEL_STYLESHEET);
 
-    SubtitleLabel = new QLabel(SUBTITLE_LABEL_NAME, this);
-    SubtitleLabel->setAlignment(Qt::AlignCenter);
-    SubtitleLabel->setStyleSheet(SUBTITLE_LABEL_STYLESHEET);
-
+    m_pSubtitleLabel = new QLabel(SUBTITLE_LABEL_NAME, this);
+    m_pSubtitleLabel->setAlignment(Qt::AlignCenter);
+    m_pSubtitleLabel->setStyleSheet(SUBTITLE_LABEL_STYLESHEET);
     //Create a vertical Layout and add the label and button to it
     QVBoxLayout* Layout = new QVBoxLayout(this);
 
     //Generate the link to the title and subtitle, added BEFORE the status label
-    Layout->addWidget(this->TitleLabel);
-    Layout->addWidget(this->SubtitleLabel);
+    Layout->addWidget(m_pTitleLabel);
+    Layout->addWidget(m_pSubtitleLabel);
 
-    //Telemetry cards row: the three labels side by side, equal width
-
-    //Banners: full width, only one (or none) visible at a time
 #if USE_GRAPHIC_PANEL
-    GraphicTelemetryPanel = new QtGraphicTelemetryPanel(this);
-    Layout->addWidget(GraphicTelemetryPanel);
+    m_pGraphicTelemetryPanel = new QtGraphicTelemetryPanel(this);
+    Layout->addWidget(m_pGraphicTelemetryPanel);
     Layout->addSpacing(16);
 #else
-    TelemetryPanel = new QtUAVTelemetryPanel(this);
-    Layout->addWidget(TelemetryPanel);
+    m_pTelemetryPanel = new QtUAVTelemetryPanel(this);
+    Layout->addWidget(m_pTelemetryPanel);
     Layout->addSpacing(16);
 #endif
 }
@@ -91,8 +92,19 @@ void GCSMainWindow::StopUAVTelemetry()
 
 void GCSMainWindow::closeEvent(QCloseEvent* CloseEvent)
 {
-    delete TitleLabel;
-    delete SubtitleLabel;
+    m_pTitleLabel->deleteLater();
+    m_pTitleLabel = nullptr;
+
+    m_pSubtitleLabel->deleteLater();
+    m_pSubtitleLabel = nullptr;
+
+#if USE_GRAPHIC_PANEL
+    m_pGraphicTelemetryPanel->deleteLater();
+    m_pGraphicTelemetryPanel = nullptr;
+#else
+    m_pTelemetryPanel->deleteLater();
+    m_pTelemetryPanel = nullptr;
+#endif
 
     CloseEvent->accept();
 }
@@ -100,8 +112,8 @@ void GCSMainWindow::closeEvent(QCloseEvent* CloseEvent)
 void GCSMainWindow::OnTelemetryReceived(const UAVState& State)
 {
 #if USE_GRAPHIC_PANEL
-    GraphicTelemetryPanel->SetUAVState(State);
+    m_pGraphicTelemetryPanel->SetUAVState(State);
 #else
-    TelemetryPanel->SetUAVState(State);
+    m_pTelemetryPanel->SetUAVState(State);
 #endif
 }

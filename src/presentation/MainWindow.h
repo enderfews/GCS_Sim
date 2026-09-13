@@ -43,12 +43,11 @@ protected:
 private:
 	void OnTelemetryReceived(const struct UAVState& State);
 	//Titles for the window
-	QLabel* TitleLabel = nullptr;
-	QLabel* SubtitleLabel = nullptr;
-	QPushButton* buttonReconnet = nullptr;
+	QLabel* m_pTitleLabel;
+	QLabel* m_pSubtitleLabel;
 
-	QtUAVTelemetryPanel* TelemetryPanel = nullptr;
-	QtGraphicTelemetryPanel* GraphicTelemetryPanel = nullptr;
+	QtUAVTelemetryPanel* m_pTelemetryPanel;
+	QtGraphicTelemetryPanel* m_pGraphicTelemetryPanel;
 	//App Services
 	unique_ptr<TelemetryService> m_pUAVTelemetryService;
 

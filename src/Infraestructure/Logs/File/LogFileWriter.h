@@ -30,7 +30,7 @@ private:
 private:
 	ofstream m_LogFile;
 	string m_sFileName;
-	static const string FileBaseName;
-	static const string FileFormat;
-	static const string LogFolder;
+	static const string g_sFileBaseName;
+	static const string g_sFileFormat;
+	static const string g_sLogFolder;
 };

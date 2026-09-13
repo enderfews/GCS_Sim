@@ -7,7 +7,6 @@
 
 QtUdpTelemetryInput::~QtUdpTelemetryInput()
 {
-	/*Stop();*/
 }
 
 void QtUdpTelemetryInput::Start()
@@ -32,7 +31,6 @@ void QtUdpTelemetryInput::Start()
 
 void QtUdpTelemetryInput::Stop()
 {
-	//QObject::disconnect(m_pUdpSocket, &QUdpSocket::readyRead, this, &QtUdpTelemetryInput::receiveUdpDatagram);
 	if (!m_pInputThread || !m_pWorker)
 	{
 		GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Invalid worker and/or thread"));
@@ -54,8 +52,6 @@ void QtUdpTelemetryInput::Stop()
 	m_pInputThread = nullptr;
 
 	m_bIsCallbcackSet = false;
-	m_bIsCallbcackSet = false;
-	//delete m_pUdpSocket;
 }
 
 void QtUdpTelemetryInput::SetTelemetryCallback(OnTelemetryReceivedCallback Callback)
@@ -91,21 +87,3 @@ void QtUdpTelemetryInput::OnWorkerError(const QString& Message)
 {
 	GCSLog::GetInstance().Log(ELogLevel::Error, Message.toStdString());
 }
-
-//void QtUdpTelemetryInput::receiveUdpDatagram()
-//{
-//	if (!m_bIsCallbcackSet)
-//	{
-//		GCSLog::GetInstance().Log(ELogLevel::Error, FUNCTION_MSG("Callback has not set on receiving datagram"));
-//		return;
-//	}
-//	// Fetch the full datagram: raw bytes and metadata
-//	QNetworkDatagram datagram = m_pUdpSocket->receiveDatagram();
-//
-//	// Extract only the raw bytes from the datagram, ignoring metadata.
-//	QByteArray QPayload = datagram.data();
-//	//We get the bytes in this format so it doesn't rely on Qt nor other implementations
-//	m_CachedRawData.clear();
-//	m_CachedRawData.insert(m_CachedRawData.end(), QPayload.begin(), QPayload.end());
-//	m_CachedCallback(m_CachedRawData);
-//}

@@ -13,11 +13,15 @@ QtGraphicTelemetryPanel::QtGraphicTelemetryPanel(QWidget* Parent/* = nullptr*/)
 void QtGraphicTelemetryPanel::SetUAVState(const UAVState& State)
 {
 	m_UAVState = State;
+    //paintGL will be called
     update();
 }
 
 void QtGraphicTelemetryPanel::initializeGL()
 {
+    /*Following Qt documentation https://doc.qt.io/qt-6/qopenglwidget.html
+    * we call this function here so that we can prefix every GL call
+    */
 	initializeOpenGLFunctions();
 	glClearColor(0.05f, 0.05f, 0.05f, 1.0f);//TODO: No magic numbers
 
